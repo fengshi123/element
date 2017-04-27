@@ -139,4 +139,6 @@
       this.dispatch('ElSelect', 'onOptionDestroy', this);
     }
   };
+    XXX(){
+    };
 </script>

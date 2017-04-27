@@ -653,6 +653,7 @@
     },
 
     mounted() {
+      alert("888888888");
       alert("test");
       if (this.multiple && Array.isArray(this.value) && this.value.length > 0) {
         this.currentPlaceholder = '';
