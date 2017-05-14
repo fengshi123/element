@@ -654,8 +654,6 @@
     },
 
     mounted() {
-       alert("good good study day day up");
-      alert('22111');
       if (this.multiple && Array.isArray(this.value) && this.value.length > 0) {
         this.currentPlaceholder = '';
       }
