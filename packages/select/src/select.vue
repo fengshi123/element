@@ -654,6 +654,7 @@
     },
 
     mounted() {
+      alert('nothing is impossible');
       if (this.multiple && Array.isArray(this.value) && this.value.length > 0) {
         this.currentPlaceholder = '';
       }

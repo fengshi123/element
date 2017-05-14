@@ -202,6 +202,160 @@ describe('DatePicker', () => {
     }, DELAY);
   });
 
+  describe('input event', () => {
+    // mimic standard <select>'s behavior
+    // emit input if and only if value changes
+    afterEach(() => {
+      destroyVM(vm);
+    });
+
+    it('works for type=date', done => {
+      let emitted = false;
+      vm = createVue({
+        template: `
+          <el-date-picker
+            ref="compo"
+            v-model="value"
+            type="date"
+            @input="handleInput" />`,
+
+        methods: {
+          handleInput(val) {
+            emitted = true;
+          }
+        },
+
+        data() {
+          return {
+            value: ''
+          };
+        }
+      }, true);
+
+      const input = vm.$el.querySelector('input');
+
+      input.blur();
+      input.focus();
+
+      setTimeout(_ => {
+        const picker = vm.$refs.compo.picker;
+
+        picker.$el.querySelector('td.available').click();
+        setTimeout(_ => {
+          expect(emitted).to.true;
+          emitted = false;
+
+          setTimeout(_ => {
+            input.blur();
+            input.focus();
+
+            picker.$el.querySelector('td.available').click();
+            setTimeout(_ => {
+              expect(emitted).to.false;
+              done();
+            }, DELAY);
+          }, DELAY);
+        }, DELAY);
+      }, DELAY);
+    });
+
+    it('works for type=daterange', done => {
+      let emitted = false;
+      vm = createVue({
+        template: `
+          <el-date-picker
+            ref="compo"
+            v-model="value"
+            type="daterange"
+            @input="handleInput" />`,
+
+        methods: {
+          handleInput(val) {
+            emitted = true;
+          }
+        },
+
+        data() {
+          return {
+            value: ''
+          };
+        }
+      }, true);
+
+      const input = vm.$el.querySelector('input');
+
+      input.blur();
+      input.focus();
+
+      setTimeout(_ => {
+        const picker = vm.$refs.compo.picker;
+
+        picker.$el.querySelector('td.available').click();
+        setTimeout(_ => {
+          picker.$el.querySelector('td.available + td.available').click();
+          setTimeout(_ => {
+            expect(emitted).to.true;
+            emitted = false;
+
+            setTimeout(_ => {
+              input.blur();
+              input.focus();
+
+              const picker = vm.$refs.compo.picker;
+              picker.$el.querySelector('td.available').click();
+              setTimeout(_ => {
+                picker.$el.querySelector('td.available + td.available').click();
+                setTimeout(_ => {
+                  expect(emitted).to.false;
+                  done();
+                });
+              }, DELAY);
+            }, DELAY);
+          });
+        }, DELAY);
+      }, DELAY);
+    });
+
+  });
+
+  it('default value', done => {
+    const toDateStr = date => {
+      let d = new Date(date);
+      return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    };
+    let today = new Date();
+    let nextMonth = new Date(today);
+    nextMonth.setDate(1);
+    if (nextMonth.getMonth() === 12) {
+      nextMonth.setFullYear(today.getFullYear + 1);
+      nextMonth.setMonth(1);
+    } else {
+      nextMonth.setMonth(today.getMonth() + 1);
+    }
+    let nextMonthStr = toDateStr(nextMonth);
+
+    vm = createVue({
+      template: `<el-date-picker v-model="value" ref="compo" default-value="${nextMonthStr}" />`,
+      data() {
+        return {
+          value: ''
+        };
+      }
+    }, true);
+
+    const input = vm.$el.querySelector('input');
+
+    input.focus();
+    setTimeout(_ => {
+      const $el = vm.$refs.compo.picker.$el;
+      $el.querySelector('td.current').click();
+      setTimeout(_ => {
+        expect(vm.value).to.equal(nextMonthStr);
+      });
+      done();
+    });
+  });
+
   describe('keydown', () => {
     let input;
     let keyDown = function(el, keyCode) {
