@@ -654,7 +654,7 @@
     },
 
     mounted() {
-       alert("测试");
+       alert("good good study");
       alert('22111');
       if (this.multiple && Array.isArray(this.value) && this.value.length > 0) {
         this.currentPlaceholder = '';
